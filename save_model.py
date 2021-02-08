@@ -1,0 +1,36 @@
+import tensorflow as tf
+#Step 1 
+tf.compat.v1.disable_eager_execution()
+#import the model metagraph
+saver = tf.compat.v1.train.import_meta_graph('./model_logs/release_places2_256/snap-0.meta', clear_devices=True)
+#make that as the default graph
+graph = tf.compat.v1.get_default_graph()
+input_graph_def = graph.as_graph_def()
+sess = tf.compat.v1.Session()
+#now restore the variables
+saver.restore(sess, "./model_logs/release_places2_256/snap-0")
+
+#Step 2
+# Find the output name
+graph = tf.compat.v1.get_default_graph()
+for op in graph.get_operations(): 
+  print (op.name)
+
+#Step 3
+from tensorflow.python.platform import gfile
+from tensorflow.compat.v1 import graph_util
+
+output_node_names="inpaint_net/conv1/kernel_0/tag,inpaint_net/conv1/kernel_0,inpaint_net/conv1/bias_0/tag,inpaint_net/conv1/bias_0,inpaint_net/conv2_downsample/kernel_0/tag,inpaint_net/conv2_downsample/kernel_0,inpaint_net/conv2_downsample/bias_0/tag,inpaint_net/conv2_downsample/bias_0,inpaint_net/conv3/kernel_0/tag,inpaint_net/conv3/kernel_0,inpaint_net/conv3/bias_0/tag,inpaint_net/conv3/bias_0,inpaint_net/conv4_downsample/kernel_0/tag,inpaint_net/conv4_downsample/kernel_0,inpaint_net/conv4_downsample/bias_0/tag,inpaint_net/conv4_downsample/bias_0,inpaint_net/conv5/kernel_0/tag,inpaint_net/conv5/kernel_0,inpaint_net/conv5/bias_0/tag,inpaint_net/conv5/bias_0,inpaint_net/conv6/kernel_0/tag,inpaint_net/conv6/kernel_0,inpaint_net/conv6/bias_0/tag,inpaint_net/conv6/bias_0,inpaint_net/conv7_atrous/kernel_0/tag,inpaint_net/conv7_atrous/kernel_0,inpaint_net/conv7_atrous/bias_0/tag,inpaint_net/conv7_atrous/bias_0,inpaint_net/conv8_atrous/kernel_0/tag,inpaint_net/conv8_atrous/kernel_0,inpaint_net/conv8_atrous/bias_0/tag,inpaint_net/conv8_atrous/bias_0,inpaint_net/conv9_atrous/kernel_0/tag,inpaint_net/conv9_atrous/kernel_0,inpaint_net/conv9_atrous/bias_0/tag,inpaint_net/conv9_atrous/bias_0,inpaint_net/conv10_atrous/kernel_0/tag,inpaint_net/conv10_atrous/kernel_0,inpaint_net/conv10_atrous/bias_0/tag,inpaint_net/conv10_atrous/bias_0,inpaint_net/conv11/kernel_0/tag,inpaint_net/conv11/kernel_0,inpaint_net/conv11/bias_0/tag,inpaint_net/conv11/bias_0,inpaint_net/conv12/kernel_0/tag,inpaint_net/conv12/kernel_0,inpaint_net/conv12/bias_0/tag,inpaint_net/conv12/bias_0,inpaint_net/conv13_upsample/conv13_upsample_conv/kernel_0/tag,inpaint_net/conv13_upsample/conv13_upsample_conv/kernel_0,inpaint_net/conv13_upsample/conv13_upsample_conv/bias_0/tag,inpaint_net/conv13_upsample/conv13_upsample_conv/bias_0,inpaint_net/conv14/kernel_0/tag,inpaint_net/conv14/kernel_0,inpaint_net/conv14/bias_0/tag,inpaint_net/conv14/bias_0,inpaint_net/conv15_upsample/conv15_upsample_conv/kernel_0/tag,inpaint_net/conv15_upsample/conv15_upsample_conv/kernel_0,inpaint_net/conv15_upsample/conv15_upsample_conv/bias_0/tag,inpaint_net/conv15_upsample/conv15_upsample_conv/bias_0,inpaint_net/conv16/kernel_0/tag,inpaint_net/conv16/kernel_0,inpaint_net/conv16/bias_0/tag,inpaint_net/conv16/bias_0,inpaint_net/conv17/kernel_0/tag,inpaint_net/conv17/kernel_0,inpaint_net/conv17/bias_0/tag,inpaint_net/conv17/bias_0,inpaint_net/xconv1/kernel_0/tag,inpaint_net/xconv1/kernel_0,inpaint_net/xconv1/bias_0/tag,inpaint_net/xconv1/bias_0,inpaint_net/xconv2_downsample/kernel_0/tag,inpaint_net/xconv2_downsample/kernel_0,inpaint_net/xconv2_downsample/bias_0/tag,inpaint_net/xconv2_downsample/bias_0,inpaint_net/xconv3/kernel_0/tag,inpaint_net/xconv3/kernel_0,inpaint_net/xconv3/bias_0/tag,inpaint_net/xconv3/bias_0,inpaint_net/xconv4_downsample/kernel_0/tag,inpaint_net/xconv4_downsample/kernel_0,inpaint_net/xconv4_downsample/bias_0/tag,inpaint_net/xconv4_downsample/bias_0,inpaint_net/xconv5/kernel_0/tag,inpaint_net/xconv5/kernel_0,inpaint_net/xconv5/bias_0/tag,inpaint_net/xconv5/bias_0,inpaint_net/xconv6/kernel_0/tag,inpaint_net/xconv6/kernel_0,inpaint_net/xconv6/bias_0/tag,inpaint_net/xconv6/bias_0,inpaint_net/xconv7_atrous/kernel_0/tag,inpaint_net/xconv7_atrous/kernel_0,inpaint_net/xconv7_atrous/bias_0/tag,inpaint_net/xconv7_atrous/bias_0,inpaint_net/xconv8_atrous/kernel_0/tag,inpaint_net/xconv8_atrous/kernel_0,inpaint_net/xconv8_atrous/bias_0/tag,inpaint_net/xconv8_atrous/bias_0,inpaint_net/xconv9_atrous/kernel_0/tag,inpaint_net/xconv9_atrous/kernel_0,inpaint_net/xconv9_atrous/bias_0/tag,inpaint_net/xconv9_atrous/bias_0,inpaint_net/xconv10_atrous/kernel_0/tag,inpaint_net/xconv10_atrous/kernel_0,inpaint_net/xconv10_atrous/bias_0/tag,inpaint_net/xconv10_atrous/bias_0,inpaint_net/pmconv1/kernel_0/tag,inpaint_net/pmconv1/kernel_0,inpaint_net/pmconv1/bias_0/tag,inpaint_net/pmconv1/bias_0,inpaint_net/pmconv2_downsample/kernel_0/tag,inpaint_net/pmconv2_downsample/kernel_0,inpaint_net/pmconv2_downsample/bias_0/tag,inpaint_net/pmconv2_downsample/bias_0,inpaint_net/pmconv3/kernel_0/tag,inpaint_net/pmconv3/kernel_0,inpaint_net/pmconv3/bias_0/tag,inpaint_net/pmconv3/bias_0,inpaint_net/pmconv4_downsample/kernel_0/tag,inpaint_net/pmconv4_downsample/kernel_0,inpaint_net/pmconv4_downsample/bias_0/tag,inpaint_net/pmconv4_downsample/bias_0,inpaint_net/pmconv5/kernel_0/tag,inpaint_net/pmconv5/kernel_0,inpaint_net/pmconv5/bias_0/tag,inpaint_net/pmconv5/bias_0,inpaint_net/pmconv6/kernel_0/tag,inpaint_net/pmconv6/kernel_0,inpaint_net/pmconv6/bias_0/tag,inpaint_net/pmconv6/bias_0,inpaint_net/pmconv9/kernel_0/tag,inpaint_net/pmconv9/kernel_0,inpaint_net/pmconv9/bias_0/tag,inpaint_net/pmconv9/bias_0,inpaint_net/pmconv10/kernel_0/tag,inpaint_net/pmconv10/kernel_0,inpaint_net/pmconv10/bias_0/tag,inpaint_net/pmconv10/bias_0,inpaint_net/allconv11/kernel_0/tag,inpaint_net/allconv11/kernel_0,inpaint_net/allconv11/bias_0/tag,inpaint_net/allconv11/bias_0,inpaint_net/allconv12/kernel_0/tag,inpaint_net/allconv12/kernel_0,inpaint_net/allconv12/bias_0/tag,inpaint_net/allconv12/bias_0,inpaint_net/allconv13_upsample/allconv13_upsample_conv/kernel_0/tag,inpaint_net/allconv13_upsample/allconv13_upsample_conv/kernel_0,inpaint_net/allconv13_upsample/allconv13_upsample_conv/bias_0/tag,inpaint_net/allconv13_upsample/allconv13_upsample_conv/bias_0,inpaint_net/allconv14/kernel_0/tag,inpaint_net/allconv14/kernel_0,inpaint_net/allconv14/bias_0/tag,inpaint_net/allconv14/bias_0,inpaint_net/allconv15_upsample/allconv15_upsample_conv/kernel_0/tag,inpaint_net/allconv15_upsample/allconv15_upsample_conv/kernel_0,inpaint_net/allconv15_upsample/allconv15_upsample_conv/bias_0/tag,inpaint_net/allconv15_upsample/allconv15_upsample_conv/bias_0,inpaint_net/allconv16/kernel_0/tag,inpaint_net/allconv16/kernel_0,inpaint_net/allconv16/bias_0/tag,inpaint_net/allconv16/bias_0,inpaint_net/allconv17/kernel_0/tag,inpaint_net/allconv17/kernel_0,inpaint_net/allconv17/bias_0/tag,inpaint_net/allconv17/bias_0"
+output_graph_def = graph_util.convert_variables_to_constants(
+        sess, # The session
+        input_graph_def, # input_graph_def is useful for retrieving the nodes 
+        output_node_names.split(",")  )    
+
+#Step 4
+#output folder
+output_fld ='./'
+#output pb file name
+output_model_file = 'model.pb'
+from tensorflow.python.framework import graph_io
+#write the graph
+graph_io.write_graph(output_graph_def, output_fld, output_model_file, as_text=False)
